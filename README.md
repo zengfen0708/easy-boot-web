@@ -1,6 +1,8 @@
 # easy-boot-web
 
-easyboot 前端源码
+easyboot 前端源码,基于Vue+Element实现.
+
+**开发文档**  [https://blog.csdn.net/str0708/article/category/9438521](https://blog.csdn.net/str0708/article/category/9438521)<br/>
 
 #### 前端模板
 
