@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <!--form 组件-->
-    <eForm ref="form" :is-add="isAdd" :dicts="dicts" />
+    <eForm ref="form" :is-add="isAdd" :dicts="dictMap" />
     <el-row :gutter="20">
       <!--部门数据-->
       <el-col :xs="7" :sm="6" :md="4" :lg="4" :xl="4">
@@ -135,7 +135,7 @@ export default {
     this.getDeptDatas()
     this.$nextTick(() => {
       // 加载数据字典
-      this.getDict('user_status')
+      this.getDictMap('user_status,user_sex')
 
       this.init()
     })
@@ -192,10 +192,10 @@ export default {
     },
     add() {
       this.isAdd = true
-      this.$refs.form.getDepts()
-      this.$refs.form.getRoles()
-      this.$refs.form.getRoleLevel()
-      this.$refs.form.dialog = true
+      const _this = this.$refs.form
+      _this.getDepts()
+      _this.getAllRole()
+      _this.dialog = true
     },
     // 导出
     download() {
@@ -228,17 +228,18 @@ export default {
     edit(data) {
       this.isAdd = false
       const _this = this.$refs.form
-      _this.getRoles()
+      _this.getAllRole()
       _this.getDepts()
-      _this.getRoleLevel()
       _this.roleIds = []
-      _this.form = { id: data.id, username: data.username, phone: data.phone, email: data.email, enabled: data.enabled.toString(), roles: [], dept: { id: data.dept.id }, job: { id: data.job.id }}
+      _this.form = { id: data.id,
+        username: data.username, password: data.password, nickname: data.nickname,
+        phone: data.phone, email: data.email,
+        sex: data.sex,
+        status: data.status.toString(), roles: [], deptId: data.deptId, jobId: data.jobId }
       data.roles.forEach(function(data, index) {
         _this.roleIds.push(data.id)
       })
-      _this.deptId = data.dept.id
-      _this.jobId = data.job.id
-      _this.getJobs(_this.deptId)
+      _this.getJobs(data.deptId)
       _this.dialog = true
     }
   }

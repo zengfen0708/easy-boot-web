@@ -1,5 +1,16 @@
 import request from '@/utils/request'
 
+export function getAllJob(deptId) {
+  const params = {
+    deptId
+  }
+  return request({
+    url: 'system/job/getAllJob',
+    method: 'get',
+    params
+  })
+}
+
 export function add(data) {
   return request({
     url: 'system/job/save',

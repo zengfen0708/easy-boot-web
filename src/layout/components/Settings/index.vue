@@ -19,7 +19,7 @@
       </div>
 
       <div class="drawer-item">
-        <span>Sidebar Logo</span>
+        <span>显示 Logo</span>
         <el-switch v-model="sidebarLogo" class="drawer-switch" />
       </div>
 

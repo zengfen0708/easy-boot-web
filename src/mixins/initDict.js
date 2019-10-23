@@ -30,7 +30,7 @@ export default {
       }
       return new Promise((resolve, reject) => {
         getDictMap(names).then(res => {
-          this.dictMap = res
+          this.dictMap = res.data
           resolve(res)
         }).catch(err => {
           reject(err)

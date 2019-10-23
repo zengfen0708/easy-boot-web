@@ -1,42 +1,80 @@
 <template>
-  <el-dialog :visible.sync="dialog" :title="isAdd ? '新增用户' : '编辑用户'" append-to-body width="570px">
-    <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small" label-width="66px">
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="form.username" />
-      </el-form-item>
-      <el-form-item label="状态" prop="enabled">
-        <el-radio v-for="item in dicts" :key="item.id" v-model="form.enabled" :label="item.value">{{ item.label }}</el-radio>
-      </el-form-item>
-      <el-form-item label="电话" prop="phone">
-        <el-input v-model.number="form.phone" />
-      </el-form-item>
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.email" />
-      </el-form-item>
-      <el-form-item label="部门">
-        <treeselect v-model="deptId" :options="depts" :style="style" placeholder="选择部门" @select="selectFun" />
-      </el-form-item>
-      <el-form-item label="岗位">
-        <el-select v-model="jobId" :style="style" placeholder="请先选择部门">
-          <el-option
-            v-for="(item, index) in jobs"
-            :key="item.name + index"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item style="margin-bottom: 0px;" label="角色">
-        <el-select v-model="roleIds" style="width: 450px;" multiple placeholder="请选择">
-          <el-option
-            v-for="(item, index) in roles"
-            :key="item.name + index"
-            :disabled="level !== 1 && item.level <= level"
-            :label="item.name"
-            :value="item.id"
-          />
-        </el-select>
-      </el-form-item>
+  <el-dialog :visible.sync="dialog" :title="isAdd ? '新增用户' : '编辑用户'" append-to-body width="690px">
+    <el-form ref="form" :inline="true" :model="form" :rules="rules" size="small">
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="form.username" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="昵称" prop="nickname">
+            <el-input v-model="form.nickname" />
+          </el-form-item></el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="密   码" prop="password">
+            <el-input v-model="form.password" placeholder="请输入密码" show-password />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="状态" prop="status">
+            <el-radio v-for="item in dicts.user_status" :key="item.id" v-model="form.status" :label="item.value">{{ item.label }}</el-radio>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <el-form-item label="邮箱" prop="email">
+            <el-input v-model="form.email" style="width: 100px;" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item label="电话" prop="phone">
+            <el-input v-model.number="form.phone" style="width: 100px;" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="性别" prop="sex">
+            <el-radio v-for="item in dicts.user_sex" :key="item.id" v-model="form.sex" :label="item.value">{{ item.label }}</el-radio>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="部门">
+            <treeselect v-model="form.deptId" :options="depts" :style="style" placeholder="选择部门" @select="selectFun" />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="12">
+          <el-form-item label="岗位">
+            <el-select v-model="form.jobId" :style="style" placeholder="请先选择部门">
+              <el-option
+                v-for="(item, index) in jobs"
+                :key="item.name + index"
+                :label="item.name"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-form-item style="margin-bottom: 0px;" label="角色">
+            <el-select v-model="roleIds" style="width: 400px;" multiple filterable placeholder="请选择角色">
+              <el-option
+                v-for="(item, index) in roles"
+                :key="item.roleName + index"
+                :label="item.roleName"
+                :value="item.id"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="text" @click="cancel">取消</el-button>
@@ -48,8 +86,8 @@
 <script>
 
 import { add, edit } from '@/api/system/user'
-import { getDepts } from '@/api/system/dept'
-import { getAll, getLevel } from '@/api/system/role'
+import { getDeptsTree } from '@/api/system/dept'
+import { getAllRole } from '@/api/system/role'
 import { getAllJob } from '@/api/system/job'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -61,34 +99,35 @@ export default {
       required: true
     },
     dicts: {
-      type: Array,
+      type: Object,
       required: true
     }
+
   },
   data() {
-    const validPhone = (rule, value, callback) => {
+    const validPassword = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请输入电话号码'))
-      } else if (!this.isvalidPhone(value)) {
-        callback(new Error('请输入正确的11位手机号码'))
+        callback(new Error('请输入密码'))
+      } else if (!this.isvalidPassword(value)) {
+        callback(new Error('提示：需要设置强密码(必须包含大小写字母和数字和特殊字符四种类型组合，长度在8位以上)'))
       } else {
         callback()
       }
     }
     return {
-      dialog: false, loading: false, form: { username: '', email: '', enabled: 'false', roles: [], job: { id: '' }, dept: { id: '' }, phone: null },
-      roleIds: [], roles: [], depts: [], deptId: null, jobId: null, jobs: [], style: 'width: 184px', level: 3,
+      dialog: false, loading: false,
+      form: {
+        username: '', password: '', nickname: null, phone: null, email: null, status: '', jobId: '', deptId: '', sex: '', roles: []
+      },
+      roleIds: [], roles: [],
+      style: 'width: 184px',
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
         ],
-        email: [
-          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, trigger: 'blur', validator: validPhone }
+        password: [
+          { required: true, trigger: 'blur', validator: validPassword }
         ],
         enabled: [
           { required: true, message: '状态不能为空', trigger: 'blur' }
@@ -150,7 +189,7 @@ export default {
         this.resetForm()
         this.$notify({
           title: '添加成功',
-          message: '默认密码：Sdb@657812',
+          message: '添加用户成功',
           type: 'success',
           duration: 2500
         })
@@ -165,7 +204,7 @@ export default {
       edit(this.form).then(res => {
         this.resetForm()
         this.$notify({
-          title: '修改成功',
+          title: '修改用户成功',
           type: 'success',
           duration: 2500
         })
@@ -179,43 +218,39 @@ export default {
     resetForm() {
       this.dialog = false
       this.$refs['form'].resetFields()
-      this.deptId = null
-      this.jobId = null
       this.roleIds = []
-      this.form = { username: '', email: '', enabled: 'false', roles: [], job: { id: '' }, dept: { id: '' }, phone: null }
+      this.form = { username: '', password: '', nickname: null,
+        phone: null, email: null, status: '',
+        jobId: '', deptId: '', sex: '', roles: []
+      }
     },
-    getRoles() {
-      getAll().then(res => {
-        this.roles = res
+    getAllRole() {
+      getAllRole().then(res => {
+        this.roles = res.data
       }).catch(err => {
         console.log(err.response.message)
       })
     },
     getJobs(id) {
       getAllJob(id).then(res => {
-        this.jobs = res.content
+        this.jobs = res.data
       }).catch(err => {
         console.log(err.response.message)
       })
     },
     getDepts() {
-      getDepts({ enabled: true }).then(res => {
-        this.depts = res.content
+      getDeptsTree().then(res => {
+        this.depts = res.data
       })
     },
-    isvalidPhone(str) {
-      const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+    isvalidPassword(str) {
+      const reg = /^^(?![0-9]+$)(?![a-zA-Z]+$)\S{8,}$/
       return reg.test(str)
     },
     selectFun(node, instanceId) {
+      this.jobId = null
+      this.jobs = []
       this.getJobs(node.id)
-    },
-    getRoleLevel() {
-      getLevel().then(res => {
-        this.level = res.level
-      }).catch(err => {
-        console.log(err.response.message)
-      })
     }
   }
 }

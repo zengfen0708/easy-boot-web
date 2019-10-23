@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function getAllRole() {
+  return request({
+    url: 'system/role/getAllRole',
+    method: 'get'
+  })
+}
+
 export function add(data) {
   return request({
     url: 'system/role/save',

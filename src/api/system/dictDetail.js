@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 
+// 查询一个字典
 export function get(dictName) {
   const data = {
     'dictName': dictName
@@ -11,6 +12,16 @@ export function get(dictName) {
   })
 }
 
+export function getDictMap(dictName) {
+  const data = {
+    'dictName': dictName
+  }
+  return request({
+    url: 'system/dictDetail/queryDictDetailsMap',
+    method: 'post',
+    data
+  })
+}
 export function add(data) {
   return request({
     url: 'system/dictDetail/save',
