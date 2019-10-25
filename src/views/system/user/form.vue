@@ -119,6 +119,7 @@ export default {
       form: {
         username: '', password: '', nickname: null, phone: null, email: null, status: '', jobId: '', deptId: '', sex: '', roles: []
       },
+      depts: [], jobs: [],
       roleIds: [], roles: [],
       style: 'width: 184px',
       rules: {

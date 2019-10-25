@@ -1,24 +1,33 @@
-import { initData } from '@/api/data'
+import { initData, exportData } from '@/api/data'
 import permission from '@/directive/permission/index.js' // 权限判断指令
 import checkPermission from '@/utils/permission' // 权限判断函数
+import exportUtils from '@/utils/exportUtils'
 import { parseTime } from '@/utils/index'
+
+import UploadComponent from '@/components/Upload/index'
 
 export default {
   // 注册局部指令
   directives: { permission },
   data() {
     return {
+      downloadLoading: false,
       loading: true,
       data: [],
       page: 0,
       size: 10,
       total: 0,
       url: '',
+      exportUrl: '',
       params: {},
       query: {},
       time: 180,
-      isAdd: false
+      isAdd: false,
+      isUpload: false
     }
+  },
+  components: {
+    UploadComponent
   },
   methods: {
     parseTime,
@@ -68,6 +77,26 @@ export default {
     toQuery() {
       this.page = 0
       this.init()
+    },
+    // 导出文件信息
+    downloadFile(fileName) {
+      const _this = this
+      _this.downloadLoading = true
+      // 导出文件
+      exportData(_this.exportUrl, _this.params).then(res => {
+        exportUtils(res, fileName)
+        setTimeout(() => {
+          _this.downloadLoading = false
+        }, _this.time)
+      }).catch(err => {
+        this.downloadLoading = false
+        this.$message({
+          type: 'warning',
+          message: '导出失败，请联系管理员！'
+        })
+        console.log(err)
+      })
     }
   }
+
 }

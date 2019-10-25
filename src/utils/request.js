@@ -35,6 +35,12 @@ service.interceptors.response.use(
   response => {
     const res = response.data
 
+    const headersConfig = response.headers
+
+    if (headersConfig['content-type'] === 'application/octet-stream') {
+      return res
+    }
+
     if (res.code !== 0) {
       Message({
         message: res.message || 'Error',

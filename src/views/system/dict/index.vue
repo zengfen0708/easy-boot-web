@@ -2,6 +2,7 @@
   <div class="app-container">
     <!--表单组件-->
     <eForm ref="form" :is-add="isAdd" :dicts="dicts" />
+    <upload-component ref="uploadForm" :on-success="handleSuccess" :file-name="downFileName" :file-url="downFileUrl" />
     <el-row :gutter="10">
       <el-col :xs="24" :sm="24" :md="10" :lg="10" :xl="10">
         <el-card class="box-card">
@@ -25,6 +26,28 @@
               <el-option v-for="item in queryTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
             </el-select>
             <el-button class="filter-item" size="mini" type="success" icon="el-icon-search" @click="toQuery">搜索</el-button>
+
+            <div style="display: inline-block;">
+              <el-button
+                v-permission="['SUPER','DICT_EXPORTEXCEL']"
+                :loading="downloadLoading"
+                size="mini"
+                class="filter-item"
+                type="warning"
+                icon="el-icon-download"
+                @click="downloadFile(ZFExportfileName)"
+              >导出</el-button>
+            </div>
+
+            <el-button
+              v-permission="['SUPER','DICT_IMPORTEXCEL']"
+              size="mini"
+              type="primary"
+              class="filter-item"
+              icon="el-icon-upload"
+              @click="$refs.uploadForm.dialog = true;"
+            >批量导入
+            </el-button>
           </div>
           <!--表格渲染-->
           <el-table v-loading="loading" :data="data" size="small" highlight-current-row style="width: 100%;" @current-change="handleCurrentChange">
@@ -94,11 +117,15 @@ import initDict from '@/mixins/initDict'
 import { del } from '@/api/system/dict'
 import dictDetail from '../dictDetail/index'
 import eForm from './form'
+
 export default {
   components: { dictDetail, eForm },
   mixins: [initData, initDict],
   data() {
     return {
+      ZFExportfileName: '字典表.xlsx',
+      downFileName: '字典表.xlsx',
+      downFileUrl: 'system/dict/importExcel',
       delLoading: false,
       queryTypeOptions: [
         { key: 'name', display_name: '字典名称' },
@@ -116,6 +143,7 @@ export default {
   },
   methods: {
     beforeInit() {
+      this.exportUrl = 'system/dict/exportExcel'
       this.url = 'system/dict/list'
       this.params = { page: this.page, size: this.size }
       const query = this.query
@@ -164,6 +192,10 @@ export default {
         status: data.status.toString()
       }
       _this.dialog = true
+    },
+    // 文件上传成功
+    handleSuccess() {
+      console.log('刷新首页')
     }
   }
 }

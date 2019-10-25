@@ -12,6 +12,7 @@ const getters = {
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
   sqlApi: state => state.api.sqlApi,
-  swaggerApi: state => state.api.swaggerApi
+  swaggerApi: state => state.api.swaggerApi,
+  uploadApi: state => state.api.uploadApi
 }
 export default getters

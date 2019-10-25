@@ -6,7 +6,9 @@ const api = {
     // Sql 监控
     sqlApi: defaultSettings.base_api + '/druid',
     // swagger
-    swaggerApi: defaultSettings.base_api + '/doc.html'
+    swaggerApi: defaultSettings.base_api + '/doc.html',
+    // 文件上传
+    uploadApi: defaultSettings.base_api + '/'
   }
 }
 
