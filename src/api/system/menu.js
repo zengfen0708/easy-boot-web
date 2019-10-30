@@ -27,7 +27,7 @@ export function add(data) {
 // 删除菜单
 export function del(id) {
   return request({
-    url: 'system/menus/' + id,
+    url: 'system/menus/delete/' + id,
     method: 'post'
   })
 }

@@ -7,6 +7,13 @@ export function getAllRole() {
   })
 }
 
+export function getRoleById(userId) {
+  return request({
+    url: 'system/role/getRoleById/' + userId,
+    method: 'get'
+  })
+}
+
 export function add(data) {
   return request({
     url: 'system/role/save',

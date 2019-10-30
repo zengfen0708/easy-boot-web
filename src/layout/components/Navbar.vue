@@ -27,16 +27,15 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
-            <el-dropdown-item>Profile</el-dropdown-item>
-          </router-link>
           <router-link to="/">
             <el-dropdown-item>首页</el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
+          <a target="_blank" href="https://github.com/zengfen0708/easy-boot-web">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
-
+          <a target="_blank" href="https://gitee.com/zf0708/easy-boot-web">
+            <el-dropdown-item>码云</el-dropdown-item>
+          </a>
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">系统退出</span>
           </el-dropdown-item>

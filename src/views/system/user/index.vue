@@ -36,13 +36,13 @@
           <!-- 导出 -->
           <div style="display: inline-block;">
             <el-button
-              v-permission="['SUPER','USER_ALL','USER_EXPORTEXCEL']"
+              v-permission="['SUPER','DICT_EXPORTEXCEL']"
               :loading="downloadLoading"
               size="mini"
               class="filter-item"
               type="warning"
               icon="el-icon-download"
-              @click="download"
+              @click="downloadFile(ZFExportfileName)"
             >导出</el-button>
           </div>
         </div>
@@ -59,7 +59,7 @@
           </el-table-column>
           <el-table-column label="状态" align="center">
             <template slot-scope="scope">
-              <div v-for="item in dicts" :key="item.id">
+              <div v-for="item in dictMap.user_status" :key="item.id">
                 <el-tag v-if="scope.row.status.toString() === item.value" :type="scope.row.status === 0 ? 'info':''">{{ item.label }}</el-tag>
               </div>
             </template>
@@ -107,14 +107,18 @@ import initData from '@/mixins/initData'
 import initDict from '@/mixins/initDict'
 import { del } from '@/api/system/user'
 import { getDepts } from '@/api/system/dept'
+import { getRoleById } from '@/api/system/role'
 import eForm from './form'
 export default {
   components: { eForm },
   mixins: [initData, initDict],
   data() {
     return {
+      ZFExportfileName: '用户表.xlsx',
+      downFileName: '用户表.xlsx',
+      downFileUrl: 'system/user/importExcel',
       height: document.documentElement.clientHeight - 180 + 'px;', isAdd: false,
-      delLoading: false, deptName: '', depts: [], deptId: null,
+      delLoading: false, deptName: '', depts: [], deptId: null, roles: [],
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -148,6 +152,8 @@ export default {
   },
   methods: {
     beforeInit() {
+      // 后端导出地址
+      this.exportUrl = 'system/user/exportExcel'
       this.url = 'system/user/list'
       this.params = { page: this.page, size: this.size }
       const query = this.query
@@ -197,21 +203,6 @@ export default {
       _this.getAllRole()
       _this.dialog = true
     },
-    // 导出
-    download() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['ID', '用户名', '邮箱', '头像地址', '状态', '注册日期', '最后修改密码日期']
-        const filterVal = ['id', 'username', 'email', 'avatar', 'enabled', 'createTime', 'lastPasswordResetTime']
-        const data = this.formatJson(filterVal, this.data)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
     // 数据转换
     formatJson(filterVal, jsonData) {
       const _this = this
@@ -227,18 +218,23 @@ export default {
     },
     edit(data) {
       this.isAdd = false
+
       const _this = this.$refs.form
       _this.getAllRole()
       _this.getDepts()
       _this.roleIds = []
+      _this.role = []
+      getRoleById(data.id).then(res => {
+        _this.role = res.data
+        _this.role.forEach(function(data) {
+          _this.roleIds.push(data.id)
+        })
+      })
       _this.form = { id: data.id,
         username: data.username, password: data.password, nickname: data.nickname,
         phone: data.phone, email: data.email,
-        sex: data.sex,
-        status: data.status.toString(), roles: [], deptId: data.deptId, jobId: data.jobId }
-      data.roles.forEach(function(data, index) {
-        _this.roleIds.push(data.id)
-      })
+        sex: data.sex.toString(),
+        status: data.status.toString(), deptId: data.deptId, jobId: data.jobId }
       _this.getJobs(data.deptId)
       _this.dialog = true
     }

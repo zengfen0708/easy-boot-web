@@ -16,9 +16,22 @@ function pluralize(time, label) {
 export function userStatus(status) {
   switch (status) {
     case 0:
-      return '禁用'
+      return '禁用1'
     case 1:
-      return '启用'
+      return '启用2'
+    default:
+      return '未知3'
+  }
+}
+
+export function userSex(sex) {
+  switch (sex) {
+    case 0:
+      return '未设置'
+    case 1:
+      return '男'
+    case 2:
+      return '女'
     default:
       return '未知'
   }

@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function add(data) {
   return request({
-    url: 'system/users',
+    url: 'system/user/save',
     method: 'post',
     data
   })
@@ -10,15 +10,15 @@ export function add(data) {
 
 export function del(id) {
   return request({
-    url: 'system/users/' + id,
-    method: 'delete'
+    url: 'system/user/delete/' + id,
+    method: 'post'
   })
 }
 
 export function edit(data) {
   return request({
-    url: 'system/users',
-    method: 'put',
+    url: 'system/user/update',
+    method: 'post',
     data
   })
 }

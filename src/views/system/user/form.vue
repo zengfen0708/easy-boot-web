@@ -149,8 +149,9 @@ export default {
       this.resetForm()
     },
     doSubmit() {
-      this.form.dept.id = this.deptId
-      this.form.job.id = this.jobId
+      this.deptId = this.form.deptId
+      this.jobId = this.form.jobId
+
       this.$refs['form'].validate((valid) => {
         if (valid) {
           if (this.deptId === null || this.deptId === undefined) {
@@ -173,8 +174,7 @@ export default {
             this.form.roles = []
             const _this = this
             this.roleIds.forEach(function(data, index) {
-              const role = { id: data }
-              _this.form.roles.push(role)
+              _this.form.roles.push(data)
             })
             if (this.isAdd) {
               this.doAdd()
