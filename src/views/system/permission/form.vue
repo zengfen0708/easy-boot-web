@@ -1,7 +1,7 @@
 <template>
   <el-dialog :visible.sync="dialog" :title="isAdd ? '新增权限' : '编辑权限'" append-to-body width="500px">
     <el-form ref="form" :model="form" :rules="rules" size="small" label-width="80px">
-      <el-form-item label="名称" prop="name">
+      <el-form-item label="权限名称" prop="name">
         <el-input v-model="form.name" style="width: 360px;" />
       </el-form-item>
       <el-form-item label="别名" prop="alias">
@@ -35,9 +35,7 @@ export default {
       loading: false, dialog: false, permissions: [],
       form: { name: '', alias: '', pid: 0 },
       rules: {
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
-        ],
+
         alias: [
           { required: true, message: '请输入别名', trigger: 'blur' }
         ]
