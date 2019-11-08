@@ -156,7 +156,8 @@ export default {
           type: 'success',
           duration: 1500,
           onClose: () => {
-            _this.visible = false
+            _this.dialog = false
+            _this.onSuccess()
           }
         })
       } else {

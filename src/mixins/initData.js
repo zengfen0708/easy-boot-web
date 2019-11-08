@@ -57,7 +57,7 @@ export default {
       return true
     },
     pageChange(e) {
-      this.page = e - 1
+      this.page = e
       this.init()
     },
     sizeChange(e) {
@@ -71,7 +71,7 @@ export default {
         size = 1
       }
       if (this.data.length === size && this.page !== 0) {
-        this.page = this.page - 1
+        this.page = this.page
       }
     },
     toQuery() {
