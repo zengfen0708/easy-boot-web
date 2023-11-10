@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@riophae/vue-treeselect": "^0.3.0",
-    "axios": "0.18.1",
+    "axios": "1.6.0",
     "element-ui": "2.7.2",
     "file-saver": "^2.0.2",
     "fuse.js": "^3.4.5",
